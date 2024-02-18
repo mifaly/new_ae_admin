@@ -1,0 +1,26 @@
+{
+  "name": "new_ae_admin",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "autoprefixer": "^10.4.17",
+    "daisyui": "^4.7.2",
+    "postcss": "^8.4.35",
+    "solid-devtools": "^0.29.3",
+    "tailwindcss": "^3.4.1",
+    "vite": "^5.1.2",
+    "vite-plugin-solid": "^2.10.1"
+  },
+  "dependencies": {
+    "html-format": "^1.1.6",
+    "solid-js": "^1.8.15",
+    "solid-monaco": "github:mifaly/solid-monaco"
+  }
+}
