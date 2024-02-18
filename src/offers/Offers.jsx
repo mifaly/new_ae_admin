@@ -1,10 +1,12 @@
 import { Suspense, createResource, createSignal } from "solid-js";
 import { createStore, produce } from "solid-js/store";
 import { PerfixURI, useCfg } from "../utils/utils";
-import { NumberInput, TextInput, Select, Switch, alert, confirm, Pagination, TextArea, KVbadge, KVTextInput, KVNumberInput, DiffEditor } from "../utils/components";
+import { NumberInput, TextInput, Select, Switch, alert, confirm, Pagination, TextArea, KVbadge, KVTextInput, KVNumberInput, JsonEditor, DiffEditor } from "../utils/components";
 import format from "html-format";
 
 let [showEditor, setShowEditor] = createSignal(false);
+let [editStr, setEditStr] = createSignal("");
+let [showDiffEditor, setShowDiffEditor] = createSignal(false);
 let [left, setLeft] = createSignal("");
 let [right, setRight] = createSignal("");
 let [lang, setLang] = createSignal("json");
@@ -44,39 +46,52 @@ export default function Offers() {
         return [() => searchKeys[item], (v) => setSearchKeys(produce(c => { c[item] = v }))];
     }
     return (
-        <>
-            <Show when={showEditor()}>
-                <button class="btn btn-circle btn-sm btn-error fixed right-5 top-5 z-20" onclick={() => setShowEditor(false)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-                <div class="h-screen w-screen bg-white fixed top-0 left-0 z-10">
-                    <DiffEditor left={left()} right={right()} lang={lang()} />
+        <div class="drawer drawer-end">
+            <input id="drawer-editor-controller" type="checkbox" class="drawer-toggle" checked={showEditor()} onChange={(e) => {
+                setShowEditor(e.target.checked);
+            }} />
+            <div class="drawer-content">
+                <Show when={showDiffEditor()}>
+                    <button class="btn btn-circle btn-sm btn-error fixed right-5 top-5 z-20" onclick={() => setShowDiffEditor(false)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                    <div class="h-screen w-screen bg-white fixed top-0 left-0 z-10">
+                        <DiffEditor left={left()} right={right()} lang={lang()} />
+                    </div>
+                </Show>
+                <div class="bg-slate-50 pb-3">
+                    <NumberInput name="offer_id" label="offer_id" model={createModelHandle("offer_id")} class="input-sm w-32" />
+                    <NumberInput name="product_id" label="product_id" model={createModelHandle("product_id")} class="input-sm w-40" />
+                    <TextInput name="model_id" label="货号" model={createModelHandle("model_id")} class="input-sm w-24" />
+                    <TextInput name="supplier" label="供货商" model={createModelHandle("supplier")} class="input-sm w-32" />
+                    <Select name="pending" label="状态" model={createModelHandle("pending")} default={searchKeys.pending} options={[{ value: 999, label: "全部" }, { value: 0, label: "正常" }, { value: -1, label: "待处理" }, { value: -2, label: "待下架" }]} class="select-sm" />
+                    <Switch label="已删除" name="deleted" model={createModelHandle("deleted")} default={searchKeys.deleted} />
+                    <button class="btn btn-primary btn-sm ml-4" onClick={refetchOffers}>刷新</button>
+                    <button class="btn btn-primary btn-xs ml-20" onClick={() => confirm("确定忽略所有折扣价变更？", () => fetch(PerfixURI + "offers/allbetterpricechnageisok").catch(err => alert(err)))}>折扣价变更一键处理</button>
                 </div>
-            </Show>
-            <div class="bg-slate-50 pb-3">
-                <NumberInput name="offer_id" label="offer_id" model={createModelHandle("offer_id")} class="input-sm w-32" />
-                <NumberInput name="product_id" label="product_id" model={createModelHandle("product_id")} class="input-sm w-40" />
-                <TextInput name="model_id" label="货号" model={createModelHandle("model_id")} class="input-sm w-24" />
-                <TextInput name="supplier" label="供货商" model={createModelHandle("supplier")} class="input-sm w-32" />
-                <Select name="pending" label="状态" model={createModelHandle("pending")} default={searchKeys.pending} options={[{ value: 999, label: "全部" }, { value: 0, label: "正常" }, { value: -1, label: "待处理" }, { value: -2, label: "待下架" }]} class="select-sm" />
-                <Switch label="已删除" name="deleted" model={createModelHandle("deleted")} default={searchKeys.deleted} />
-                <button class="btn btn-primary btn-sm ml-4" onClick={refetchOffers}>刷新</button>
-                <button class="btn btn-primary btn-xs ml-20" onClick={() => confirm("确定忽略所有折扣价变更？", () => fetch(PerfixURI + "offers/allbetterpricechnageisok").catch(err => alert(err)))}>折扣价变更一键处理</button>
+                <Pagination total={total} per_page={() => searchKeys.per_page} page={() => searchKeys.page} setPage={page => setSearchKeys(produce(c => { c['page'] = page }))} setPer_page={per_page => setSearchKeys(produce(c => {
+                    c['page'] = Math.ceil(((c['page'] - 1) * c['per_page'] + 1) / per_page);
+                    c['per_page'] = per_page;
+                }))} />
+                <div class="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-3 p-1">
+                    <Suspense fallback={<span class="loading loading-ring loading-lg"></span>}>
+                        <For each={offers()}>{offer => <Offer {...offer} />}</For>
+                    </Suspense>
+                </div>
+                <Pagination total={total} per_page={() => searchKeys.per_page} page={() => searchKeys.page} setPage={page => setSearchKeys(produce(c => { c['page'] = page }))} setPer_page={per_page => setSearchKeys(produce(c => {
+                    c['page'] = Math.ceil(((c['page'] - 1) * c['per_page'] + 1) / per_page);
+                    c['per_page'] = per_page;
+                }))} />
             </div>
-            <Pagination total={total} per_page={() => searchKeys.per_page} page={() => searchKeys.page} setPage={page => setSearchKeys(produce(c => { c['page'] = page }))} setPer_page={per_page => setSearchKeys(produce(c => {
-                c['page'] = Math.ceil(((c['page'] - 1) * c['per_page'] + 1) / per_page);
-                c['per_page'] = per_page;
-            }))} />
-            <div class="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-3 p-1">
-                <Suspense fallback={<span class="loading loading-ring loading-lg"></span>}>
-                    <For each={offers()}>{offer => <Offer {...offer} />}</For>
-                </Suspense>
+            <div class="drawer-side">
+                <label for="drawer-editor-controller" aria-label="close sidebar" class="drawer-overlay"></label>
+                <div class="p-1 w-1/3 min-h-full bg-base-200 text-base-content">
+                    <Show when={showEditor()}>
+                        <JsonEditor value={editStr()} height="100vh" readOnly={true} />
+                    </Show>
+                </div>
             </div>
-            <Pagination total={total} per_page={() => searchKeys.per_page} page={() => searchKeys.page} setPage={page => setSearchKeys(produce(c => { c['page'] = page }))} setPer_page={per_page => setSearchKeys(produce(c => {
-                c['page'] = Math.ceil(((c['page'] - 1) * c['per_page'] + 1) / per_page);
-                c['per_page'] = per_page;
-            }))} />
-        </>
+        </div>
     );
 }
 
@@ -127,7 +142,10 @@ function Offer(props) {
                 <KVNumberInput ref={product_id} href={cfg().PRODUCT_URL_PATTERN.replace("{PRODUCT_ID}", offer.product_id)} class="w-32" k="product_id" model={[() => offer["product_id"], (v) =>
                     fetch(PerfixURI + "offers/pid/" + offer.id + "/" + v).then(() => setOffer(produce(c => c["product_id"] = v))).catch(err => { product_id.value = c["product_id"]; alert(err); })
                 ]} />
-                <KVbadge k="月销量" v={offer.sale30} />
+                <KVbadge k="月销量" v={offer.sale30} onclick={async () => {
+                    setEditStr(offer.sale_record);
+                    setShowEditor(true);
+                }} style="cursor: pointer;" />
                 <KVTextInput ref={model_id} class="w-12" k="model_id" model={[() => offer["model_id"], (v) =>
                     fetch(PerfixURI + "offers/mid/" + offer.id + "/" + v).then(() => setOffer(produce(c => c["model_id"] = v))).catch(err => { model_id.value = c["model_id"]; alert(err); })
                 ]} />
@@ -138,7 +156,7 @@ function Offer(props) {
                     setLeft(offer.sku_info_use);
                     setRight(offer.sku_info);
                     setLang("json");
-                    setShowEditor(true);
+                    setShowDiffEditor(true);
                 }} style="cursor: pointer;" />
                 <KVbadge k="详描" v="DIFF" onclick={async () => {
                     let a = await (await fetch(offer.detail_url_use)).text();
@@ -148,7 +166,7 @@ function Offer(props) {
                     setLeft(a);
                     setRight(b);
                     setLang("html");
-                    setShowEditor(true);
+                    setShowDiffEditor(true);
                 }} style="cursor: pointer;" />
                 <KVbadge href={offer.store_url} k="供货商" v={offer.supplier} />
                 <KVbadge k="创建" v={nomalizeDateTime(offer.created_at)} />
