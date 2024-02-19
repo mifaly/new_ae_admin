@@ -69,7 +69,7 @@ export default function Products() {
                     <NumberInput name="product_id" label="product_id" model={createModelHandle("product_id")} class="input-sm w-40" />
                     <Select name="pending" label="状态" model={createModelHandle("pending")} default={searchKeys.pending} options={[{ value: 999, label: "全部" }, { value: 0, label: "正常" }, { value: -1, label: "待处理" }, { value: -2, label: "待下架" }]} class="select-sm" />
                     <Select name="inited_weight" label="重量初始" model={createModelHandle("inited_weight")} default={searchKeys.pending} options={[{ value: -1, label: "全部" }, { value: 1, label: "已初始化" }, { value: 0, label: "未初始化" }]} class="select-sm" />
-                    <Switch label="已删除" name="deleted" model={createModelHandle("deleted")} default={searchKeys.deleted} />
+                    <Switch label="已删除" name="deleted" model={createModelHandle("deleted")} default={searchKeys.deleted} class="toggle-error" />
                     <button class="btn btn-primary btn-sm ml-4" onClick={refetchProducts}>刷新</button>
                     <KVNumberInput href={PerfixURI + "products/dl_discount_xslx/" + discount()} class="w-12" k="↓折扣↓" model={[discount, setDiscount]} />
                     <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="file-input file-input-bordered file-input-xs file-input-primary w-20 max-w-xs" onchange={(e) => {
@@ -155,7 +155,7 @@ function Product(props) {
                                 deleted_at.checked = !!c["deleted_at"];
                                 alert(err);
                             })
-                    ]} default={!!product.deleted_at} class="toggle-sm focus:outline-none" />
+                    ]} default={!!product.deleted_at} class="toggle-sm toggle-error focus:outline-none" />
                     <span class="text-xs relative bottom-1.5">{showDeletedAt()}</span>
                 </div>
                 <div class="pt-1.5">
@@ -166,7 +166,7 @@ function Product(props) {
                                 inited_weight.checked = !!c["inited_weight"];
                                 alert(err);
                             })
-                    ]} default={!!product.inited_weight} class="toggle-sm focus:outline-none" />
+                    ]} default={!!product.inited_weight} class="toggle-sm toggle-primary focus:outline-none" />
                     <span class="text-xs relative bottom-1.5">{product.inited_weight ? "重量已初始" : "重量未初始"}</span>
                 </div>
                 <TextArea ref={tips} placeholder="tips" class={"textarea-xs w-full h-16 max-h-16 leading-tight" + (product.tips.trim().length > 0 ? " textarea-error bg-error text-white" : "")} model={[() => product["tips"], (v) =>

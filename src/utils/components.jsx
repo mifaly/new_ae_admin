@@ -68,12 +68,12 @@ export function Switch(props) {
                 <div class="label py-1">
                     <span class="label-text">{props.label || props.name}</span>
                 </div>
-                <input ref={props.ref} type="checkbox" itype="switch" class={"toggle toggle-error" + (props.class ? " " + props.class : "")} use:model={props.model} prop:name={props.name || ''} value={true} prop:checked={props.default} />
+                <input ref={props.ref} type="checkbox" itype="switch" class={"toggle" + (props.class ? " " + props.class : "")} use:model={props.model} prop:name={props.name || ''} value={true} prop:checked={props.default} />
             </label>
         );
     } else {
         return (
-            <input ref={props.ref} type="checkbox" itype="switch" class={"toggle toggle-error" + (props.class ? " " + props.class : "")} use:model={props.model} prop:name={props.name || ''} value={true} prop:checked={props.default} />
+            <input ref={props.ref} type="checkbox" itype="switch" class={"toggle" + (props.class ? " " + props.class : "")} use:model={props.model} prop:name={props.name || ''} value={true} prop:checked={props.default} />
         );
     }
 }

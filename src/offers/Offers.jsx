@@ -65,7 +65,7 @@ export default function Offers() {
                     <TextInput name="model_id" label="货号" model={createModelHandle("model_id")} class="input-sm w-24" />
                     <TextInput name="supplier" label="供货商" model={createModelHandle("supplier")} class="input-sm w-32" />
                     <Select name="pending" label="状态" model={createModelHandle("pending")} default={searchKeys.pending} options={[{ value: 999, label: "全部" }, { value: 0, label: "正常" }, { value: -1, label: "待处理" }, { value: -2, label: "待下架" }]} class="select-sm" />
-                    <Switch label="已删除" name="deleted" model={createModelHandle("deleted")} default={searchKeys.deleted} />
+                    <Switch label="已删除" name="deleted" model={createModelHandle("deleted")} default={searchKeys.deleted} class="toggle-error" />
                     <button class="btn btn-primary btn-sm ml-4" onClick={refetchOffers}>刷新</button>
                     <button class="btn btn-primary btn-xs ml-20" onClick={() => confirm("确定忽略所有折扣价变更？", () => fetch(PerfixURI + "offers/allbetterpricechnageisok").catch(err => alert(err)))}>折扣价变更一键处理</button>
                 </div>
@@ -125,7 +125,7 @@ function Offer(props) {
                                 deleted_at.checked = !!c["deleted_at"];
                                 alert(err);
                             })
-                    ]} default={!!offer.deleted_at} class="toggle-sm focus:outline-none" />
+                    ]} default={!!offer.deleted_at} class="toggle-sm toggle-error focus:outline-none" />
                     <span class="text-xs relative bottom-1.5">{showDeletedAt()}</span>
                 </div>
                 <TextArea ref={tips} placeholder="tips" class={"textarea-xs w-full h-24 max-h-24 leading-tight" + (offer.tips.trim().length > 0 ? " textarea-error bg-error text-white" : "")} model={[() => offer["tips"], (v) =>
