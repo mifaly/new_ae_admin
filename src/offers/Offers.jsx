@@ -64,7 +64,7 @@ export default function Offers() {
                     <NumberInput name="product_id" label="product_id" model={createModelHandle("product_id")} class="input-sm w-40" />
                     <TextInput name="model_id" label="货号" model={createModelHandle("model_id")} class="input-sm w-24" />
                     <TextInput name="supplier" label="供货商" model={createModelHandle("supplier")} class="input-sm w-32" />
-                    <Select name="pending" label="状态" model={createModelHandle("pending")} default={searchKeys.pending} options={[{ value: 999, label: "全部" }, { value: 0, label: "正常" }, { value: -1, label: "待处理" }, { value: -2, label: "待下架" }]} class="select-sm" />
+                    <Select name="pending" label="状态" model={createModelHandle("pending")} default={searchKeys.pending} options={[{ value: 999, label: "全部" }, { value: 0, label: "正常" }, { value: -1, label: "待处理" }, { value: -2, label: "未上架" }]} class="select-sm" />
                     <Switch label="已删除" name="deleted" model={createModelHandle("deleted")} default={searchKeys.deleted} class="toggle-error" />
                     <button class="btn btn-primary btn-sm ml-4" onClick={refetchOffers}>刷新</button>
                     <button class="btn btn-primary btn-xs ml-20" onClick={() => confirm("确定忽略所有折扣价变更？", () => fetch(PerfixURI + "offers/allbetterpricechnageisok").catch(err => alert(err)))}>折扣价变更一键处理</button>
@@ -116,7 +116,7 @@ function Offer(props) {
             <div class="inline-block px-1 align-top max-h-40" style="max-width:50%;">
                 <Select ref={pending} model={[() => offer["pending"], (v) =>
                     fetch(PerfixURI + "offers/pending/" + offer.id + "/" + v).then(() => setOffer(produce(c => c["pending"] = v))).catch(err => { pending.value = c["pending"]; alert(err); })
-                ]} default={offer.pending} options={[{ value: 0, label: "正常" }, { value: -1, label: "待处理" }, { value: -2, label: "待下架" }]} class={"select-xs block" + (offer.pending === 0 ? "" : " select-error bg-error text-white")} />
+                ]} default={offer.pending} options={[{ value: 0, label: "正常" }, { value: -1, label: "待处理" }, { value: -2, label: "未上架" }]} class={"select-xs block" + (offer.pending === 0 ? "" : " select-error bg-error text-white")} />
                 <div class="pt-1.5">
                     <Switch ref={deleted_at} model={[() => offer.deleted_at, (v) =>
                         fetch(PerfixURI + "offers/delete/" + offer.id + "/" + !!v)

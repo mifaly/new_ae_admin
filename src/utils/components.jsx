@@ -156,16 +156,16 @@ export function Pagination(props) {
                     <button onclick={() => props.setPage(props.page() - 1)} class="join-item btn btn-xs">{props.page() - 1}</button>
                 </Show>
                 <button class="join-item btn btn-xs btn-primary">{props.page()}</button>
-                <Show when={props.page() < pages() - 1}>
+                <Show when={props.page() < pages()}>
                     <button onclick={() => props.setPage(props.page() + 1)} class="join-item btn btn-xs">{props.page() + 1}</button>
                 </Show>
-                <Show when={props.page() < pages() - 2}>
+                <Show when={props.page() < pages() - 1}>
                     <button onclick={() => props.setPage(props.page() + 2)} class="join-item btn btn-xs">{props.page() + 2}</button>
                 </Show>
-                <Show when={props.page() < pages() - 3}>
+                <Show when={props.page() < pages() - 2}>
                     <button onclick={() => props.setPage(props.page() + 3)} class="join-item btn btn-xs">{props.page() + 3}</button>
                 </Show>
-                <Show when={props.page() < pages() - 4}>
+                <Show when={props.page() < pages() - 3}>
                     <button onclick={() => props.setPage(props.page() + 4)} class="join-item btn btn-xs">{props.page() + 4}</button>
                 </Show>
                 <button onclick={() => props.setPage(pages())} classList={{ "btn-disabled": props.page() >= pages() }} class="font-bold join-item btn btn-xs"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24"><path fill="currentColor" d="m7 17.308l-.708-.708l4.6-4.6l-4.6-4.6L7 6.692L12.308 12zm9.5.192v-11h1v11z" /></svg></button>
