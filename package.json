@@ -15,12 +15,13 @@
     "postcss": "^8.4.35",
     "solid-devtools": "^0.29.3",
     "tailwindcss": "^3.4.1",
-    "vite": "^5.1.2",
+    "vite": "^5.1.4",
     "vite-plugin-solid": "^2.10.1"
   },
   "dependencies": {
     "html-format": "^1.1.6",
     "solid-js": "^1.8.15",
-    "solid-monaco": "github:mifaly/solid-monaco"
+    "solid-monaco": "^0.2.0",
+    "monaco-editor": "^0.43.0"
   }
 }

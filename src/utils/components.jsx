@@ -1,7 +1,8 @@
-import { Show, createSignal, mergeProps, onCleanup } from "solid-js"
+import { Show, createSignal, mergeProps, onCleanup, onMount } from "solid-js"
 import { render, Portal } from "solid-js/web";
 import { model } from "./utils"
-import { MonacoEditor, MonacoDiffEditor } from 'solid-monaco';
+import { MonacoEditor, MonacoDiffEditor, loader } from 'solid-monaco';
+import * as vs from 'monaco-editor';
 
 export function NumberInput(props) {
     const input = (<input ref={props.ref} type="text" itype="int" use:model={props.model} placeholder={props.placeholder || props.name || ''} prop:name={props.name || ''} class={"input input-primary input-bordered max-w-xs" + (props.class ? " " + props.class : "")} />);
@@ -223,6 +224,16 @@ export function KVNumberInput(props) {
 }
 
 export function JsonEditor(props) {
+    onMount(() => {
+        loader.config({
+            'vs/nls': {
+              availableLanguages: {
+                '*': 'zh-cn'
+              }
+            },
+            monaco: vs
+          });
+    });
     return (
         <MonacoEditor
             options={{
@@ -240,6 +251,16 @@ export function JsonEditor(props) {
 }
 
 export function DiffEditor(props) {
+    onMount(() => {
+        loader.config({
+            'vs/nls': {
+              availableLanguages: {
+                '*': 'zh-cn'
+              }
+            },
+            monaco: vs
+          });
+    });
     return (
         <MonacoDiffEditor
             options={{
