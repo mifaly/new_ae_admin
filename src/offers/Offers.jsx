@@ -67,7 +67,7 @@ export default function Offers() {
                     <Select name="pending" label="状态" model={createModelHandle("pending")} default={searchKeys.pending} options={[{ value: 999, label: "全部" }, { value: 0, label: "正常" }, { value: -1, label: "待处理" }, { value: -2, label: "未上架" }]} class="select-sm" />
                     <Switch label="已删除" name="deleted" model={createModelHandle("deleted")} default={searchKeys.deleted} class="toggle-error" />
                     <button class="btn btn-primary btn-sm ml-4" onClick={refetchOffers}>刷新</button>
-                    <button class="btn btn-primary btn-xs ml-20" onClick={() => confirm("确定忽略所有折扣价变更？", () => fetch(PerfixURI + "offers/allbetterpricechnageisok").catch(err => alert(err)))}>折扣价变更一键处理</button>
+                    <button class="btn btn-primary btn-xs ml-20" onClick={() => confirm("确定忽略所有折扣价变更？", () => fetch(PerfixURI + "offers/allbetterpricechnageisok").catch(err => alert(err)))}>忽略所有折扣价变更</button>
                 </div>
                 <Pagination total={total} per_page={() => searchKeys.per_page} page={() => searchKeys.page} setPage={page => setSearchKeys(produce(c => { c['page'] = page }))} setPer_page={per_page => setSearchKeys(produce(c => {
                     c['page'] = Math.ceil(((c['page'] - 1) * c['per_page'] + 1) / per_page);

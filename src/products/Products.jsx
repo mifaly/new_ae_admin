@@ -86,6 +86,7 @@ export default function Products() {
                             , () => e.target.value = "",
                         );
                     }} />
+                    <button class="btn btn-primary btn-xs ml-20" onClick={() => confirm("确定忽略所有下架建议？", () => fetch(PerfixURI + "products/available").catch(err => alert(err)))}>忽略所有下架建议</button>
                 </div>
                 <Pagination total={total} per_page={() => searchKeys.per_page} page={() => searchKeys.page} setPage={page => setSearchKeys(produce(c => { c['page'] = page }))} setPer_page={per_page => setSearchKeys(produce(c => {
                     c['page'] = Math.ceil(((c['page'] - 1) * c['per_page'] + 1) / per_page);
