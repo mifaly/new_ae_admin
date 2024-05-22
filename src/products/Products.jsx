@@ -72,7 +72,7 @@ export default function Products() {
                     <Switch label="已删除" name="deleted" model={createModelHandle("deleted")} default={searchKeys.deleted} class="toggle-error" />
                     <button class="btn btn-primary btn-sm ml-4" onClick={refetchProducts}>刷新</button>
                     <KVNumberInput href={PerfixURI + "products/dl_discount_xslx/" + discount()} class="w-12" k="↓折扣↓" model={[discount, setDiscount]} />
-                    <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="file-input file-input-bordered file-input-xs file-input-primary w-20 max-w-xs" onchange={(e) => {
+                    recent1<input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="file-input file-input-bordered file-input-xs file-input-primary w-20 max-w-xs" onchange={(e) => {
                         let fileName = e.target.files[0].name;
                         let fd = new FormData();
                         fd.append("file", e.target.files[0]);
@@ -186,7 +186,30 @@ function Product(props) {
                 <KVbadge href={cfg().PRODUCT_URL_PATTERN.replace("{PRODUCT_ID}", product.product_id)} k="product_id" v={product.product_id} />
                 <KVbadge k="货号" v={product.model_id} />
                 <KVbadge k="月uv" v={product.uv30} />
-                <KVbadge k="月销量" v={product.sales30} />
+                <KVbadge k="月销量" v={product.sales30} onclick={async () => {
+                    setEditStr(product.sale_record);
+                    beforeEditorClose = () => { };
+                    let summary = { color: {}, size: {} };
+                    let detailObj = JSON.parse(product.sale_info);
+                    for (let color in detailObj) {
+                        if (summary.color[color] === undefined) {
+                            summary.color[color] = 0;
+                        }
+                        for (let size in detailObj[color]) {
+                            if (summary.size[size] === undefined) {
+                                summary.size[size] = 0;
+                            }
+                            summary.color[color] += detailObj[color][size];
+                            summary.size[size] += detailObj[color][size];
+                        }
+                    }
+                    setSaleSum(product.sale_count);
+                    setDetail(product.sale_info);
+                    setAdviseStockNum(product.sales30 * cfg().SALE2STOCK);
+                    setSummary(JSON.stringify(summary));
+                    setAdviseStock(compute_advise_stock());
+                    setShowEditor(true);
+                }} style="cursor: pointer;" />
                 <KVbadge k="价格$" v={product.price / 100} />
                 <KVNumberInput ref={discount} class="w-20" k="额外折扣%" model={[() => product.discount, (v) =>
                     fetch(PerfixURI + "products/discount/" + product.id + "/" + v).then(() => setProduct(produce(c => c["discount"] = v))).catch(err => { discount.value = c["discount"]; alert(err); })
