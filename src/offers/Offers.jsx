@@ -147,6 +147,12 @@ function Offer(props) {
                     setEditStr(offer.sale_record);
                     setShowEditor(true);
                 }} style="cursor: pointer;" />
+                <div class="items-baseline flex-nowrap text-sm bg-slate-500 rounded-lg text-white m-1">
+                    <button class="btn btn-primary btn-xs" onClick={() => {
+                        setEditStr(offer.sale_info);
+                        setShowEditor(true);
+                    }}>销量总览</button>
+                </div>
                 <KVTextInput ref={model_id} class="w-12" k="model_id" model={[() => offer["model_id"], (v) =>
                     fetch(PerfixURI + "offers/mid/" + offer.id + "/" + v).then(() => setOffer(produce(c => c["model_id"] = v))).catch(err => { model_id.value = c["model_id"]; alert(err); })
                 ]} />
